@@ -1,5 +1,16 @@
 import React from 'react';
 import { Settings, LogOut, ChevronRight, Activity, Flame, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+
+function getInitials(name) {
+  if (!name || typeof name !== 'string') return 'U';
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return 'U';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  const first = parts[0][0];
+  const last = parts[parts.length - 1][0];
+  return (first + last).toUpperCase();
+}
 
 export default function Sidebar({
   projects,
@@ -8,6 +19,11 @@ export default function Sidebar({
   isDelayedDemo,
   onToggleStatusDemo
 }) {
+  const { user, loading: userLoading, logout } = useAuth();
+
+  const userName = user?.name || 'Pengguna';
+  const userInitials = getInitials(userName);
+  const userJobTitle = user?.job_title || 'Project Control';
   return (
     <aside className="w-80 bg-slate-900 text-white flex flex-col justify-between shrink-0 h-screen sticky top-0 border-r border-slate-800 shadow-xl select-none z-30">
       {/* Top Header & Project List */}
@@ -122,34 +138,52 @@ export default function Sidebar({
 
       {/* User Profile Footer */}
       <div className="p-4 border-t border-slate-800/90 bg-slate-950/70 backdrop-blur-sm">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-600 text-white font-bold text-sm flex items-center justify-center ring-2 ring-blue-500/30 shadow-inner shrink-0">
-              AR
+        {userLoading || !user ? (
+          <div className="flex items-center justify-between animate-pulse">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="w-10 h-10 rounded-xl bg-slate-850 bg-slate-800 shrink-0" />
+              <div className="space-y-1.5 flex-1 min-w-0 pr-2">
+                <div className="h-3.5 bg-slate-800 rounded w-24" />
+                <div className="h-2.5 bg-slate-800/70 rounded w-32" />
+              </div>
             </div>
-            <div className="min-w-0">
-              <h5 className="text-sm font-semibold text-white truncate">Andi Rahman</h5>
-              <p className="text-[11px] text-slate-400 truncate">Project Control Engineer</p>
+            <div className="w-8 h-8 rounded-lg bg-slate-800 shrink-0" />
+          </div>
+        ) : (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-600 text-white font-bold text-sm flex items-center justify-center ring-2 ring-blue-500/30 shadow-inner shrink-0">
+                {userInitials}
+              </div>
+              <div className="min-w-0">
+                <h5 className="text-sm font-semibold text-white truncate" title={userName}>
+                  {userName}
+                </h5>
+                <p className="text-[11px] text-slate-400 truncate" title={userJobTitle}>
+                  {userJobTitle}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1 text-slate-400">
+              <button
+                type="button"
+                className="p-2 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+                title="Settings"
+              >
+                <Settings className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={logout}
+                className="p-2 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors"
+                title="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
             </div>
           </div>
-          
-          <div className="flex items-center gap-1 text-slate-400">
-            <button
-              type="button"
-              className="p-2 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
-              title="Settings"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              className="p-2 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors"
-              title="Logout"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </aside>
   );

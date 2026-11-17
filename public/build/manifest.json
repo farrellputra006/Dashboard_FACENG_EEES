@@ -1,11 +1,23 @@
 {
+  "src/assets/images/logo-energy-equity.png": {
+    "file": "assets/logo-energy-equity-CrUx2P4D.png",
+    "src": "src/assets/images/logo-energy-equity.png"
+  },
+  "src/assets/images/logo-skkmigas.png": {
+    "file": "assets/logo-skkmigas-C7oDeSYq.png",
+    "src": "src/assets/images/logo-skkmigas.png"
+  },
   "src/main.jsx": {
-    "file": "assets/main-BqibG6AH.js",
+    "file": "assets/main-ChHT5hBk.js",
     "name": "main",
     "src": "src/main.jsx",
     "isEntry": true,
     "css": [
-      "assets/main-Cmk1qLZS.css"
+      "assets/main-D3Ktswll.css"
+    ],
+    "assets": [
+      "assets/logo-skkmigas-C7oDeSYq.png",
+      "assets/logo-energy-equity-CrUx2P4D.png"
     ]
   }
 }

@@ -4,14 +4,10 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Web Routes (Single Page Application Routing)
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
+Route::get('/{any?}', function () {
     return view('app');
-});
-
-Route::get('/dashboard', function () {
-    return view('app');
-});
+})->where('any', '^(?!api).*$');
