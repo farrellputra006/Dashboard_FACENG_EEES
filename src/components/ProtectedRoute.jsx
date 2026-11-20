@@ -17,9 +17,9 @@ export default function ProtectedRoute({ children }) {
               <path d="M12 8L6 18h12L12 8z" fill="rgba(37, 99, 235, 0.45)" />
             </svg>
           </div>
-          <div className="flex items-center gap-2 text-slate-300 text-sm font-medium">
-            <Loader2 className="w-4 h-4 animate-spin text-cyan-400" />
-            <span>Memverifikasi sesi pengguna...</span>
+          <div className="flex flex-col items-center gap-3">
+            <div className="ee-loader"></div>
+            <span className="text-slate-400 text-xs font-medium">Memverifikasi sesi pengguna...</span>
           </div>
         </div>
       </div>

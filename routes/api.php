@@ -8,6 +8,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProjectAttachmentController;
 use App\Http\Controllers\ProjectDocumentController;
 use App\Http\Controllers\ProjectScheduleController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,4 +74,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/projects/{project}/attachments', [ProjectAttachmentController::class, 'index'])->name('api.projects.attachments.index');
     Route::post('/projects/{project}/attachments', [ProjectAttachmentController::class, 'store'])->name('api.projects.attachments.store');
     Route::delete('/projects/{project}/attachments/{attachment}', [ProjectAttachmentController::class, 'destroy'])->name('api.projects.attachments.destroy');
+
+    // Ganti Password Mandiri (Dapat diakses seluruh role yang login)
+    Route::put('/profile/password', [UserController::class, 'updatePassword'])->name('api.profile.password');
+
+    // Manajemen User (Khusus Administrator)
+    Route::get('/users', [UserController::class, 'index'])->name('api.users.index');
+    Route::post('/users', [UserController::class, 'store'])->name('api.users.store');
+    Route::put('/users/{id}', [UserController::class, 'update'])->name('api.users.update');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('api.users.destroy');
 });

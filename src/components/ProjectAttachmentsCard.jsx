@@ -341,9 +341,9 @@ export default function ProjectAttachmentsCard({ projectId, currentProject, sele
 
       {/* 3. Document List */}
       {loading ? (
-        <div className="py-12 text-center text-slate-400 space-y-2">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-600" />
-          <p className="text-xs font-medium">Memuat daftar lampiran dokumen PDF...</p>
+        <div className="py-12 text-center text-slate-400 space-y-3 flex flex-col items-center justify-center">
+          <div className="ee-loader"></div>
+          <p className="text-xs font-semibold text-slate-500">Memuat daftar lampiran dokumen PDF...</p>
         </div>
       ) : filteredAttachments.length === 0 ? (
         <div className="bg-slate-50/50 rounded-2xl border-2 border-dashed border-slate-200 p-8 text-center space-y-3">

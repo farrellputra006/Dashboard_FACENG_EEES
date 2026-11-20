@@ -548,8 +548,8 @@ export default function NextWeekTab({
         {/* Loading State */}
         {loading ? (
           <div className="p-12 text-center text-slate-400 flex flex-col items-center justify-center gap-3">
-            <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-            <span className="text-xs font-medium">Memuat to-do list rencana kerja...</span>
+            <div className="ee-loader"></div>
+            <span className="text-xs font-semibold text-slate-500">Memuat to-do list rencana kerja...</span>
           </div>
         ) : filteredPlans.length === 0 ? (
           /* Empty State */

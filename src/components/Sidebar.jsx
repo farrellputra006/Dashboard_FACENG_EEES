@@ -1,6 +1,7 @@
 import React from 'react';
 import { Settings, LogOut, ChevronRight, Activity, Flame, ShieldAlert, CheckCircle2, User, X, ShieldCheck, Plus, FolderPlus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import AccountSettingsModal from './AccountSettingsModal';
 
 function getInitials(name) {
   if (!name || typeof name !== 'string') return 'U';
@@ -202,92 +203,11 @@ export default function Sidebar({
         )}
       </div>
 
-      {/* Settings / User Info Modal */}
-      {showSettingsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md overflow-hidden animate-scaleUp">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
-                  <User className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-slate-900">Profil Pengguna</h4>
-                  <p className="text-[11px] text-slate-500">Informasi akun yang sedang aktif</p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowSettingsModal(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="p-6 space-y-4 text-xs">
-              <div className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
-                <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white font-extrabold text-xl flex items-center justify-center shadow-xs">
-                  {userInitials}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-base font-bold text-slate-900 truncate">{userName}</h3>
-                  <p className="text-xs text-blue-600 font-semibold">{userJobTitle}</p>
-                  <p className="text-[11px] text-slate-400 truncate mt-0.5">{user?.email}</p>
-                </div>
-              </div>
-
-              <div className="space-y-2.5 pt-2">
-                <div className="flex justify-between py-2 border-b border-slate-100">
-                  <span className="text-slate-500 font-medium">Role Hak Akses:</span>
-                  <span className="font-bold text-slate-800 capitalize bg-slate-100 px-2 py-0.5 rounded-md">
-                    {user?.role || 'project_control'}
-                  </span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-slate-100">
-                  <span className="text-slate-500 font-medium">Divisi:</span>
-                  <span className="font-semibold text-slate-800">FACENG (Facility Engineering)</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-slate-100">
-                  <span className="text-slate-500 font-medium">Sistem Dashboard:</span>
-                  <span className="font-semibold text-slate-800">Energy Equity Control v2.5</span>
-                </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-500 font-medium">Status Autentikasi:</span>
-                  <span className="font-semibold text-emerald-600 flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> Terverifikasi Sanctum
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowSettingsModal(false);
-                  logout();
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Logout dari Akun</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setShowSettingsModal(false)}
-                className="px-4 py-1.5 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition-colors"
-              >
-                Tutup
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Account Settings & Security Modal (User Management & Self Password Change) */}
+      <AccountSettingsModal
+        isOpen={showSettingsModal}
+        onClose={() => setShowSettingsModal(false)}
+      />
     </aside>
   );
 }

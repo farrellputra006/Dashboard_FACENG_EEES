@@ -38,54 +38,88 @@ export function getBaseApiUrl() {
   return '';
 }
 
-export async function apiRequest(endpoint, options = {}) {
-  const token = getToken();
-  const baseUrl = getBaseApiUrl();
-  const url = `${baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+// =========================================================================
+// Global Loading Interceptor & State Subscription
+// =========================================================================
+let activeRequestCount = 0;
+const loadingListeners = new Set();
 
-  const headers = {
-    'Accept': 'application/json',
-    'X-Requested-With': 'XMLHttpRequest',
-    ...(options.headers || {}),
+export function subscribeToLoading(listener) {
+  loadingListeners.add(listener);
+  // Emit current state immediately to new listener
+  listener(activeRequestCount > 0);
+  return () => {
+    loadingListeners.delete(listener);
   };
+}
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
+function notifyLoading() {
+  const isLoading = activeRequestCount > 0;
+  loadingListeners.forEach((listener) => {
+    try {
+      listener(isLoading);
+    } catch {
+      // ignore
+    }
+  });
+}
 
-  // Auto-inject CSRF XSRF-TOKEN header if cookie is present
-  if (typeof document !== 'undefined' && document.cookie) {
-    const xsrfCookie = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('XSRF-TOKEN='));
-    if (xsrfCookie) {
-      try {
-        headers['X-XSRF-TOKEN'] = decodeURIComponent(xsrfCookie.split('=')[1]);
-      } catch {
-        // ignore decode failure
+export async function apiRequest(endpoint, options = {}) {
+  activeRequestCount++;
+  notifyLoading();
+
+  try {
+    const token = getToken();
+    const baseUrl = getBaseApiUrl();
+    const url = `${baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+
+    const headers = {
+      'Accept': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+      ...(options.headers || {}),
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    // Auto-inject CSRF XSRF-TOKEN header if cookie is present
+    if (typeof document !== 'undefined' && document.cookie) {
+      const xsrfCookie = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('XSRF-TOKEN='));
+      if (xsrfCookie) {
+        try {
+          headers['X-XSRF-TOKEN'] = decodeURIComponent(xsrfCookie.split('=')[1]);
+        } catch {
+          // ignore decode failure
+        }
       }
     }
-  }
 
-  let body = options.body;
-  if (body && typeof body === 'object' && !(body instanceof FormData)) {
-    headers['Content-Type'] = 'application/json';
-    body = JSON.stringify(body);
-  }
-
-  const response = await fetch(url, {
-    credentials: 'same-origin',
-    ...options,
-    headers,
-    body,
-  });
-
-  if (response.status === 401) {
-    removeToken();
-    if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
-      window.location.href = '/login';
+    let body = options.body;
+    if (body && typeof body === 'object' && !(body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+      body = JSON.stringify(body);
     }
-  }
 
-  return response;
+    const response = await fetch(url, {
+      credentials: 'same-origin',
+      ...options,
+      headers,
+      body,
+    });
+
+    if (response.status === 401) {
+      removeToken();
+      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
+    }
+
+    return response;
+  } finally {
+    activeRequestCount = Math.max(0, activeRequestCount - 1);
+    notifyLoading();
+  }
 }

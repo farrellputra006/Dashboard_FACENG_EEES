@@ -746,8 +746,8 @@ export default function ReportNotesTab({
           {/* Loading Overlay */}
           {isLoadingDoc ? (
             <div className="p-20 text-center flex flex-col items-center justify-center gap-3 text-slate-400">
-              <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-              <p className="text-xs font-semibold">Memuat dokumen Project Notes & Risk...</p>
+              <div className="ee-loader"></div>
+              <p className="text-xs font-semibold text-slate-500">Memuat dokumen Project Notes & Risk...</p>
             </div>
           ) : (
             <EditorContent editor={editor} />

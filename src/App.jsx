@@ -4,11 +4,13 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './components/LoginPage';
 import DashboardView from './components/DashboardView';
+import GlobalTopLoader from './components/GlobalTopLoader';
 
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <GlobalTopLoader />
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route

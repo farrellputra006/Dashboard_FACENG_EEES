@@ -1210,9 +1210,9 @@ export default function SCurveTab({ dbMetrics, project, selectedWeek, projectId,
             </div>
 
             {loadingSchedules ? (
-              <div className="p-12 text-center text-slate-500 space-y-2">
-                <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
-                <p className="text-sm font-medium">Memuat data schedule MS Project...</p>
+              <div className="p-12 text-center text-slate-500 space-y-3 flex flex-col items-center justify-center">
+                <div className="ee-loader"></div>
+                <p className="text-xs font-semibold text-slate-500">Memuat data schedule MS Project...</p>
               </div>
             ) : schedules.length === 0 ? (
               <div className="p-12 text-center text-slate-500 space-y-3">

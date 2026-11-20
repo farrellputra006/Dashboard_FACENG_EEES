@@ -1,0 +1,28 @@
+/* ==========================================================================
+   CORPORATE BLUE ENERGY EQUITY INDETERMINATE PROGRESS BAR ANIMATION
+   ========================================================================== */
+.ee-loader {
+  height: 4px;
+  width: 160px;
+  border-radius: 9999px;
+  --c: no-repeat linear-gradient(#3B6CF6 0 0);
+  background: var(--c), var(--c), #DBEAFE;
+  background-size: 60% 100%;
+  animation: ee-l16 1.8s infinite ease-in-out;
+}
+
+.ee-loader-topbar {
+  height: 3px;
+  width: 100%;
+  border-radius: 0;
+  --c: no-repeat linear-gradient(#3B6CF6 0 0);
+  background: var(--c), var(--c), #DBEAFE;
+  background-size: 60% 100%;
+  animation: ee-l16 1.8s infinite ease-in-out;
+}
+
+@keyframes ee-l16 {
+  0%   { background-position: -150% 0, -150% 0; }
+  66%  { background-position: 250% 0, -150% 0; }
+  100% { background-position: 250% 0, 250% 0; }
+}

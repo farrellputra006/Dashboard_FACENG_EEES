@@ -252,9 +252,9 @@ export default function ProgressSummaryTab({
       {/* Multi-Level Table Container */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-slate-500 space-y-2">
-            <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
-            <p className="text-sm font-medium">Memuat data Progress Summary...</p>
+          <div className="p-12 text-center text-slate-500 space-y-3 flex flex-col items-center justify-center">
+            <div className="ee-loader"></div>
+            <p className="text-xs font-semibold text-slate-500">Memuat data Progress Summary...</p>
           </div>
         ) : rows.length === 0 ? (
           <div className="p-12 text-center text-slate-500 space-y-2">

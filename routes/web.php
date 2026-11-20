@@ -23,4 +23,4 @@ Route::get('/storage/{path}', function ($path) {
 
 Route::get('/{any?}', function () {
     return view('app');
-})->where('any', '^(?!api|storage).*$');
+})->where('any', '^(?!api|storage).*$')->name('login');
