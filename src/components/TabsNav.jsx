@@ -5,7 +5,8 @@ import {
   FileSpreadsheet,
   ListChecks,
   CalendarCheck2,
-  CalendarClock
+  CalendarClock,
+  FileText
 } from 'lucide-react';
 
 export default function TabsNav({ activeTab, onTabChange }) {
@@ -16,11 +17,13 @@ export default function TabsNav({ activeTab, onTabChange }) {
     { id: 'detail', label: 'Progress Detail', icon: ListChecks },
     { id: 'thisweek', label: 'This Week Progress', icon: CalendarCheck2 },
     { id: 'nextweek', label: 'Next Week Plan', icon: CalendarClock },
+    { id: 'reportnotes', label: 'Project Notes & Risk', icon: FileText },
   ];
 
   return (
-    <div className="pb-6">
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
+    <div className="pb-4">
+      {/* Segmented Executive Tab Navigation Container */}
+      <div className="bg-slate-200/50 p-1.5 rounded-2xl border border-slate-200/80 shadow-xs inline-flex items-center gap-1.5 overflow-x-auto max-w-full custom-scrollbar">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           const Icon = tab.icon;
@@ -29,13 +32,13 @@ export default function TabsNav({ activeTab, onTabChange }) {
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap border ${
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap ${
                 isActive
-                  ? 'bg-slate-800 text-white border-slate-800 shadow-sm shadow-slate-900/10'
-                  : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300'
+                  ? 'bg-white text-blue-600 font-bold shadow-xs border border-slate-200/70'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50 font-semibold border border-transparent'
               }`}
             >
-              <Icon className={`w-4 h-4 ${isActive ? 'text-blue-400' : 'text-slate-400'}`} />
+              <Icon className={`w-4 h-4 ${isActive ? 'text-blue-600' : 'text-slate-400'}`} />
               <span>{tab.label}</span>
             </button>
           );
@@ -44,4 +47,3 @@ export default function TabsNav({ activeTab, onTabChange }) {
     </div>
   );
 }
-

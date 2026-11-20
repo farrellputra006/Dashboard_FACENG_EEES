@@ -11,6 +11,11 @@ use App\Models\SubcontractorPackage;
 use App\Models\WeeklyActivity;
 use App\Models\ProgressPhoto;
 use App\Models\HseReport;
+use App\Models\NextWeekPlan;
+use App\Models\ProjectDocument;
+use App\Models\ProjectSchedule;
+use App\Models\ScheduleWeeklyProgress;
+use App\Http\Controllers\ProjectScheduleController;
 
 class ProjectControlSeeder extends Seeder
 {
@@ -469,6 +474,105 @@ class ProjectControlSeeder extends Seeder
         }
 
         // =========================================================================
+        // 6b. SEED NEXT WEEK PLANS (TO-DO LIST) PER WEEK
+        // =========================================================================
+        $toDoPlansConfig = [
+            'Week 10' => [
+                ['Review dokumen shop drawing piping isometric dan tie-in point existing facility', 'Siti Rahma (Eng)', '2025-08-18', true],
+                ['Pengecoran pondasi utama compressor bay A dengan volume 120 m3 beton mutu tinggi', 'Ahmad Fauzi (Civil)', '2025-08-20', true],
+                ['Penyusunan preliminary HAZOP action items dan safety bridging document', 'Hendra Wijaya (HSE)', '2025-08-21', true],
+            ],
+            'Week 11' => [
+                ['Persiapan pondasi pedestal dan perataan lantai kerja shelter unit kompresor', 'Budi Santoso (Const)', '2025-08-25', true],
+                ['Kedatangan unit genset emergency dan transformer auxiliary di site Sengkang', 'Dewi Lestari (Proc)', '2025-08-27', true],
+                ['Inspeksi berkala alat pemadam api ringan (APAR) dan rambu keselamatan zona berbahaya', 'Hendra Wijaya (HSE)', '2025-08-26', true],
+                ['Kalibrasi torque wrench dan peralatan rigging sebelum lifting operation', 'Andi Rahman (QC)', '2025-08-28', false],
+            ],
+            'Week 12' => [
+                ['Mobilisasi hydraulic crane 80-ton dan rigging accessories untuk pengangkatan modul kompresor unit #2', 'Budi Santoso (Const)', '2025-09-03', true],
+                ['Finalisasi Permit To Work (PTW) panas dan cold work area flare line bersama Pertamina EP / EEES', 'Hendra Wijaya (HSE)', '2025-09-02', true],
+                ['Penyelesaian hydrostatic test spool piping 6-inch header gas dan verifikasi visual NDT', 'Andi Rahman (QC)', '2025-09-05', false],
+                ['Pengiriman batch kedua kabel instrumentasi dan junction box explosion-proof dari Makassar port', 'Dewi Lestari (Proc)', '2025-09-06', false],
+                ['Pre-commissioning lube oil system compressor package GEC#1 dengan vendor specialist', 'Siti Rahma (Eng)', '2025-09-08', false],
+                ['Penyelarasan elevasi pipe support dan torqueing anchor bolts struktur shelter kompresor', 'Ahmad Fauzi (Civil)', '2025-09-07', false],
+            ],
+        ];
+
+        foreach ($toDoPlansConfig as $wLabel => $plans) {
+            foreach ($plans as $p) {
+                NextWeekPlan::updateOrCreate(
+                    [
+                        'project_id' => $project1->id,
+                        'week' => $wLabel,
+                        'task_description' => $p[0],
+                    ],
+                    [
+                        'pic' => $p[1],
+                        'target_date' => $p[2],
+                        'is_completed' => $p[3],
+                    ]
+                );
+            }
+        }
+
+        // =========================================================================
+        // 6c. SEED PROJECT DOCUMENT (RICH TEXT REPORT & NOTES)
+        // =========================================================================
+        $initialDocContent = '<h1>Laporan Eksekutif Progres Mingguan — Booster Gas Compressor 55 MMSCFD</h1>' .
+            '<h2>1. Ringkasan Status Fisik Lapangan</h2>' .
+            '<p>Pada periode evaluasi <strong>Week 12 (Cut-off 29 Agustus 2025)</strong>, proyek menunjukkan performa <em>ahead schedule</em> dengan deviasi kumulatif positif sebesar <strong>+3.63%</strong> (Rencana: 89.82%, Aktual: 93.45%). Seluruh pengiriman unit utama kompresor GEC#1 dan GEC#2 telah tiba di site Sengkang dengan kondisi baik.</p>' .
+            '<h2>2. Matriks Pencapaian Sub-Sistem EPC</h2>' .
+            '<table style="border-collapse: collapse; width: 100%; border: 1px solid #cbd5e1;">' .
+            '<thead>' .
+            '<tr style="background-color: #f1f5f9;">' .
+            '<th style="border: 1px solid #cbd5e1; padding: 8px; text-align: left;">Disiplin EPC</th>' .
+            '<th style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">Bobot (%)</th>' .
+            '<th style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">Aktual (%)</th>' .
+            '<th style="border: 1px solid #cbd5e1; padding: 8px; text-align: left;">Catatan Lapangan</th>' .
+            '</tr>' .
+            '</thead>' .
+            '<tbody>' .
+            '<tr>' .
+            '<td style="border: 1px solid #cbd5e1; padding: 8px;">Engineering & QC</td>' .
+            '<td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">2.54%</td>' .
+            '<td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">2.54%</td>' .
+            '<td style="border: 1px solid #cbd5e1; padding: 8px;">100% Final As-Built drawing diterbitkan.</td>' .
+            '</tr>' .
+            '<tr>' .
+            '<td style="border: 1px solid #cbd5e1; padding: 8px;">Procurement</td>' .
+            '<td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">77.85%</td>' .
+            '<td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">77.03%</td>' .
+            '<td style="border: 1px solid #cbd5e1; padding: 8px;">Unit kompresor utama dan auxiliary lengkap.</td>' .
+            '</tr>' .
+            '<tr>' .
+            '<td style="border: 1px solid #cbd5e1; padding: 8px;">Construction</td>' .
+            '<td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">15.17%</td>' .
+            '<td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">11.05%</td>' .
+            '<td style="border: 1px solid #cbd5e1; padding: 8px;">Erection shelter baja dan pipe rack on schedule.</td>' .
+            '</tr>' .
+            '</tbody>' .
+            '</table>' .
+            '<h2>3. Rencana Tindak Lanjut Prioritas (Next Action Items)</h2>' .
+            '<ul>' .
+            '<li>Pelaksanaan hydrotest spool piping 6-inch header gas bersama tim inspeksi pihak ketiga.</li>' .
+            '<li>Pre-commissioning electrical distribution switchgear dan grounding resistance test.</li>' .
+            '<li>Koordinasi izin kerja panas (PTW) untuk pengelasan tie-in spool ke stasiun eksisting.</li>' .
+            '</ul>' .
+            '<p><em>Dokumen ini disusun oleh Tim Project Control dan disahkan untuk koordinasi manajemen FACENG Energy Equity Sengkang.</em></p>';
+
+        ProjectDocument::updateOrCreate(
+            [
+                'project_id' => $project1->id,
+                'week' => 'Week 12',
+            ],
+            [
+                'title' => 'Laporan Eksekutif Mingguan — Week 12 (GBKB-55)',
+                'content' => $initialDocContent,
+                'updated_by' => 'Andi Rahman (Project Control)',
+            ]
+        );
+
+        // =========================================================================
         // 7. SEED S-CURVE METRICS TIME-SERIES (55 Weeks)
         // =========================================================================
         $sCurveBase = [
@@ -536,6 +640,211 @@ class ProjectControlSeeder extends Seeder
                         'cum_forecast' => $forecast !== null ? min(100.00, $forecast) : null,
                     ]
                 );
+            }
+        }
+
+        // =========================================================================
+        // 9. PROJECT SCHEDULES & WEEKLY PROGRESS (MS Project Style & Progress Summary)
+        // =========================================================================
+        $project1Schedules = [
+            [
+                'task_name' => 'Preparation, Mobilization & Permitting',
+                'price' => 775098000.00,
+                'duration' => 60,
+                'start_date' => '2024-10-15',
+                'finish_date' => '2024-12-14',
+                'baseline_start' => '2024-10-15',
+                'baseline_finish' => '2024-12-14',
+                'prev_plan' => 3.06,
+                'prev_act' => 3.06,
+                'this_plan' => 0.00,
+                'this_act' => 0.00,
+            ],
+            [
+                'task_name' => 'Detailed Engineering & 3D Modeling Studies',
+                'price' => 643382000.00,
+                'duration' => 90,
+                'start_date' => '2024-11-01',
+                'finish_date' => '2025-01-29',
+                'baseline_start' => '2024-11-01',
+                'baseline_finish' => '2025-01-29',
+                'prev_plan' => 2.54,
+                'prev_act' => 2.54,
+                'this_plan' => 0.00,
+                'this_act' => 0.00,
+            ],
+            [
+                'task_name' => 'Procurement & Delivery of Booster Gas Compressor Package',
+                'price' => 19719405000.00,
+                'duration' => 240,
+                'start_date' => '2024-12-01',
+                'finish_date' => '2025-07-29',
+                'baseline_start' => '2024-12-01',
+                'baseline_finish' => '2025-07-29',
+                'prev_plan' => 74.45,
+                'prev_act' => 76.28,
+                'this_plan' => 0.47,
+                'this_act' => 0.75,
+            ],
+            [
+                'task_name' => 'Civil Foundation, Structural & Piping Construction',
+                'price' => 3842561000.00,
+                'duration' => 180,
+                'start_date' => '2025-02-15',
+                'finish_date' => '2025-08-14',
+                'baseline_start' => '2025-02-15',
+                'baseline_finish' => '2025-08-14',
+                'prev_plan' => 9.06,
+                'prev_act' => 10.32,
+                'this_plan' => 0.47,
+                'this_act' => 0.73,
+            ],
+            [
+                'task_name' => 'Pre-Commissioning, Hydrotest & Start-Up Execution',
+                'price' => 349554000.00,
+                'duration' => 75,
+                'start_date' => '2025-07-15',
+                'finish_date' => '2025-09-28',
+                'baseline_start' => '2025-07-15',
+                'baseline_finish' => '2025-09-28',
+                'prev_plan' => 0.00,
+                'prev_act' => 0.00,
+                'this_plan' => 0.00,
+                'this_act' => 0.00,
+            ],
+        ];
+
+        // Seed Project 1 schedules
+        foreach ($project1Schedules as $sData) {
+            $prevP = $sData['prev_plan'];
+            $prevA = $sData['prev_act'];
+            $thisP = $sData['this_plan'];
+            $thisA = $sData['this_act'];
+
+            unset($sData['prev_plan'], $sData['prev_act'], $sData['this_plan'], $sData['this_act']);
+            $sData['project_id'] = $project1->id;
+
+            $schedule = ProjectSchedule::updateOrCreate(
+                [
+                    'project_id' => $project1->id,
+                    'task_name' => $sData['task_name'],
+                ],
+                $sData
+            );
+
+            // Seed weekly progress (distribute prev across weeks 1..11, and this on week 12)
+            $prevPerWeekP = $prevP > 0 ? round($prevP / 11, 4) : 0;
+            $prevPerWeekA = $prevA > 0 ? round($prevA / 11, 4) : 0;
+
+            for ($w = 1; $w <= 11; $w++) {
+                ScheduleWeeklyProgress::updateOrCreate(
+                    [
+                        'project_schedule_id' => $schedule->id,
+                        'week' => $w,
+                    ],
+                    [
+                        'week_date' => date('Y-m-d', strtotime("2024-10-15 + " . (($w - 1) * 7) . " days")),
+                        'plan_progress' => ($w == 11) ? round($prevP - ($prevPerWeekP * 10), 2) : round($prevPerWeekP, 2),
+                        'actual_progress' => ($w == 11) ? round($prevA - ($prevPerWeekA * 10), 2) : round($prevPerWeekA, 2),
+                    ]
+                );
+            }
+
+            // Week 12
+            ScheduleWeeklyProgress::updateOrCreate(
+                [
+                    'project_schedule_id' => $schedule->id,
+                    'week' => 12,
+                ],
+                [
+                    'week_date' => '2025-08-29',
+                    'plan_progress' => $thisP,
+                    'actual_progress' => $thisA,
+                ]
+            );
+        }
+        ProjectScheduleController::recalculateWeights($project1->id);
+
+        // Seed schedules for the other projects
+        $otherProjectsScheduleConfigs = [
+            'KP9-FL' => [
+                ['task_name' => 'Right of Way (ROW) & Survey Alignment', 'price' => 1200000000.00, 'duration' => 60, 'start' => '2025-01-10', 'finish' => '2025-03-11', 'prev_p' => 8.10, 'prev_a' => 8.10, 'this_p' => 0.00, 'this_a' => 0.00],
+                ['task_name' => 'Engineering & Stress Analysis', 'price' => 950000000.00, 'duration' => 60, 'start' => '2025-01-20', 'finish' => '2025-03-21', 'prev_p' => 6.42, 'prev_a' => 6.42, 'this_p' => 0.00, 'this_a' => 0.00],
+                ['task_name' => 'Line Pipe & Fittings Procurement (8-inch)', 'price' => 14850000000.00, 'duration' => 150, 'start' => '2025-02-01', 'finish' => '2025-07-01', 'prev_p' => 59.80, 'prev_a' => 54.20, 'this_p' => 0.50, 'this_a' => 0.30],
+                ['task_name' => 'Trenching, Stringing, Welding & Lowering In', 'price' => 7330000000.00, 'duration' => 150, 'start' => '2025-03-15', 'finish' => '2025-08-12', 'prev_p' => 16.58, 'prev_a' => 16.08, 'this_p' => 1.00, 'this_a' => 1.10],
+                ['task_name' => 'Hydrostatic Testing, Caliper Pigging & Tie-In', 'price' => 1000000000.00, 'duration' => 45, 'start' => '2025-08-01', 'finish' => '2025-09-15', 'prev_p' => 0.00, 'prev_a' => 0.00, 'this_p' => 0.00, 'this_a' => 0.00],
+            ],
+            'PIS-03' => [
+                ['task_name' => 'Inspection Plan & Tool Mobilization', 'price' => 850000000.00, 'duration' => 40, 'start' => '2025-03-01', 'finish' => '2025-04-10', 'prev_p' => 9.83, 'prev_a' => 9.83, 'this_p' => 0.00, 'this_a' => 0.00],
+                ['task_name' => 'Inline Inspection (ILI) Ultrasonic & MFL Run', 'price' => 4200000000.00, 'duration' => 70, 'start' => '2025-04-05', 'finish' => '2025-06-14', 'prev_p' => 28.50, 'prev_a' => 29.00, 'this_p' => 0.50, 'this_a' => 0.60],
+                ['task_name' => 'Verification Digging & Non-Destructive Testing', 'price' => 2400000000.00, 'duration' => 60, 'start' => '2025-06-15', 'finish' => '2025-08-14', 'prev_p' => 6.17, 'prev_a' => 6.07, 'this_p' => 0.00, 'this_a' => 0.00],
+                ['task_name' => 'Integrity Assessment Report & Fitness For Service', 'price' => 1200000000.00, 'duration' => 60, 'start' => '2025-08-15', 'finish' => '2025-10-14', 'prev_p' => 0.00, 'prev_a' => 0.00, 'this_p' => 0.00, 'this_a' => 0.00],
+            ],
+            'CPF-04' => [
+                ['task_name' => 'HAZOP & Engineering Upgrades', 'price' => 2500000000.00, 'duration' => 60, 'start' => '2024-11-01', 'finish' => '2024-12-31', 'prev_p' => 7.79, 'prev_a' => 7.79, 'this_p' => 0.00, 'this_a' => 0.00],
+                ['task_name' => 'Vessel & Separator Procurement', 'price' => 18000000000.00, 'duration' => 200, 'start' => '2024-12-01', 'finish' => '2025-06-19', 'prev_p' => 45.20, 'prev_a' => 46.00, 'this_p' => 0.40, 'this_a' => 0.40],
+                ['task_name' => 'Piping & Instrument Skid Installation', 'price' => 9600000000.00, 'duration' => 120, 'start' => '2025-04-01', 'finish' => '2025-07-30', 'prev_p' => 7.81, 'prev_a' => 7.81, 'this_p' => 0.00, 'this_a' => 0.00],
+                ['task_name' => 'Commissioning & Plant Performance Run', 'price' => 2000000000.00, 'duration' => 60, 'start' => '2025-08-01', 'finish' => '2025-09-30', 'prev_p' => 0.00, 'prev_a' => 0.00, 'this_p' => 0.00, 'this_a' => 0.00],
+            ],
+            'ARR-05' => [
+                ['task_name' => 'Land Survey, Clearing & Grubbing', 'price' => 600000000.00, 'duration' => 30, 'start' => '2025-02-15', 'finish' => '2025-03-17', 'prev_p' => 14.28, 'prev_a' => 14.28, 'this_p' => 0.00, 'this_a' => 0.00],
+                ['task_name' => 'Sub-base Aggregate Compaction & Drainage Culvert', 'price' => 2100000000.00, 'duration' => 90, 'start' => '2025-03-18', 'finish' => '2025-06-16', 'prev_p' => 50.00, 'prev_a' => 48.00, 'this_p' => 0.00, 'this_a' => 0.00],
+                ['task_name' => 'Rigid Pavement Concrete Pouring (K-350)', 'price' => 1200000000.00, 'duration' => 60, 'start' => '2025-06-17', 'finish' => '2025-08-16', 'prev_p' => 23.72, 'prev_a' => 22.22, 'this_p' => 0.00, 'this_a' => 0.00],
+                ['task_name' => 'Road Marking, Guardrail & Final Handover', 'price' => 300000000.00, 'duration' => 30, 'start' => '2025-08-17', 'finish' => '2025-09-16', 'prev_p' => 0.00, 'prev_a' => 0.00, 'this_p' => 0.00, 'this_a' => 0.00],
+            ],
+        ];
+
+        foreach ($otherProjectsScheduleConfigs as $code => $items) {
+            if (isset($projects[$code])) {
+                $p = $projects[$code];
+                foreach ($items as $itm) {
+                    $pp = $itm['prev_p'];
+                    $pa = $itm['prev_a'];
+                    $tp = $itm['this_p'];
+                    $ta = $itm['this_a'];
+
+                    $sched = ProjectSchedule::updateOrCreate(
+                        [
+                            'project_id' => $p->id,
+                            'task_name' => $itm['task_name'],
+                        ],
+                        [
+                            'price' => $itm['price'],
+                            'duration' => $itm['duration'],
+                            'start_date' => $itm['start'],
+                            'finish_date' => $itm['finish'],
+                            'baseline_start' => $itm['start'],
+                            'baseline_finish' => $itm['finish'],
+                        ]
+                    );
+
+                    for ($w = 1; $w <= 11; $w++) {
+                        ScheduleWeeklyProgress::updateOrCreate(
+                            [
+                                'project_schedule_id' => $sched->id,
+                                'week' => $w,
+                            ],
+                            [
+                                'week_date' => date('Y-m-d', strtotime("{$itm['start']} + " . (($w - 1) * 7) . " days")),
+                                'plan_progress' => round($pp / 11, 2),
+                                'actual_progress' => round($pa / 11, 2),
+                            ]
+                        );
+                    }
+
+                    ScheduleWeeklyProgress::updateOrCreate(
+                        [
+                            'project_schedule_id' => $sched->id,
+                            'week' => 12,
+                        ],
+                        [
+                            'week_date' => $p->cutoff_date ?: '2025-08-29',
+                            'plan_progress' => $tp,
+                            'actual_progress' => $ta,
+                        ]
+                    );
+                }
+                ProjectScheduleController::recalculateWeights($p->id);
             }
         }
     }

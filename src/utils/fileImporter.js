@@ -121,6 +121,10 @@ export function downloadProgressTemplate(format = 'xlsx') {
 
 // Function to parse any uploaded File (ArrayBuffer or binary string)
 export async function parseUploadedProgressFile(file) {
+  if (file && (file.name?.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf')) {
+    throw new Error('File ini bukan format Excel. Untuk menyimpan laporan PDF sebagai arsip, silakan upload di bagian Lampiran Dokumen PDF.');
+  }
+
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 

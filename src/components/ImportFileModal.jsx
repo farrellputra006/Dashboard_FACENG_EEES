@@ -62,6 +62,14 @@ export default function ImportFileModal({
   const processFile = async (file) => {
     if (!file) return;
     setErrorMsg('');
+
+    // Validasi ramah jika user salah memilih file PDF di form import Excel
+    if (file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf') {
+      setErrorMsg('File ini bukan format Excel. Untuk menyimpan laporan PDF sebagai arsip, silakan upload di bagian Lampiran Dokumen PDF.');
+      setParsedData(null);
+      return;
+    }
+
     try {
       const result = await parseUploadedProgressFile(file);
       setSelectedFileMeta({
@@ -132,10 +140,10 @@ export default function ImportFileModal({
             </div>
             <div>
               <h3 className="text-base font-bold text-slate-900">
-                Impor Data Progres Mingguan (Excel / CSV)
+                Import Data Excel (.xlsx)
               </h3>
               <p className="text-xs text-slate-500">
-                Simpan data progres baru langsung ke database MySQL per minggu
+                Untuk update otomatis angka S-Curve & Progress Summary tabel FACENG
               </p>
             </div>
           </div>
@@ -272,6 +280,9 @@ export default function ImportFileModal({
                     </h4>
                     <p className="text-xs text-slate-500 mt-1">
                       atau <span className="text-blue-600 font-semibold underline">Jelajahi File Komputer</span>
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Untuk update otomatis angka S-Curve & Progress Summary
                     </p>
                   </div>
 

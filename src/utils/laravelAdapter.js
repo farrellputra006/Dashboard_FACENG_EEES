@@ -66,6 +66,10 @@ export function transformWbsCategories(dbCategories) {
   if (!dbCategories || !Array.isArray(dbCategories)) return null;
 
   return dbCategories.map((c, idx) => ({
+    id: c.id,
+    rawId: c.id,
+    projectId: c.project_id,
+    weekLabel: c.week_label,
     no: String(idx + 1),
     code: c.code,
     item: c.name,
@@ -83,21 +87,48 @@ export function transformWbsCategories(dbCategories) {
       actual: Number(c.cum_actual || 0)
     },
     variance: Number(c.variance || 0),
-    status: Number(c.cum_actual) >= 100 ? 'Completed' : Number(c.variance) >= 0 ? 'Ahead' : 'Delayed'
+    status: c.status || (Number(c.cum_actual) >= 100 ? 'Completed' : Number(c.variance) >= 0 ? 'Ahead' : 'Delayed')
   }));
 }
 
 export function transformSCurve(dbMetrics) {
   if (!dbMetrics || !Array.isArray(dbMetrics)) return null;
 
-  return dbMetrics.map(m => ({
-    week: m.week_label,
-    weekNumber: m.week_number,
-    date: m.cutoff_date ? formatDateShort(m.cutoff_date) : m.week_label,
-    plan: m.cum_plan !== null && m.cum_plan !== undefined ? Number(m.cum_plan) : null,
-    actual: m.cum_actual !== null && m.cum_actual !== undefined ? Number(m.cum_actual) : null,
-    forecast: m.cum_forecast !== null && m.cum_forecast !== undefined ? Number(m.cum_forecast) : null,
-  }));
+  // Temukan titik actual terakhir untuk auto-proyeksi tren jika forecast belum terisi
+  let lastActualWeek = 0;
+  let lastActualVal = 0;
+  dbMetrics.forEach(m => {
+    if (m.cum_actual !== null && m.cum_actual !== undefined) {
+      const w = Number(m.week_number) || 0;
+      if (w >= lastActualWeek) {
+        lastActualWeek = w;
+        lastActualVal = Number(m.cum_actual);
+      }
+    }
+  });
+
+  return dbMetrics.map(m => {
+    const wNum = Number(m.week_number) || 0;
+    const planVal = m.cum_plan !== null && m.cum_plan !== undefined ? Number(m.cum_plan) : null;
+    const actVal = m.cum_actual !== null && m.cum_actual !== undefined ? Number(m.cum_actual) : null;
+
+    // Nilai forecast: jika sudah ada (misal dari Import Excel / DB), gunakan nilai aslinya.
+    // Jika null dan berada di atau setelah minggu cutoff aktual, buat proyeksi otomatis
+    let forecastVal = m.cum_forecast !== null && m.cum_forecast !== undefined ? Number(m.cum_forecast) : null;
+    if (forecastVal === null && lastActualWeek > 0 && wNum >= lastActualWeek) {
+      const step = wNum - lastActualWeek;
+      forecastVal = Number(Math.min(100.0, lastActualVal + (step * 0.73)).toFixed(2));
+    }
+
+    return {
+      week: m.week_label,
+      weekNumber: wNum,
+      date: m.cutoff_date ? formatDateShort(m.cutoff_date) : m.week_label,
+      plan: planVal,
+      actual: actVal,
+      forecast: forecastVal,
+    };
+  });
 }
 
 export function transformSubcontractors(dbPackages) {

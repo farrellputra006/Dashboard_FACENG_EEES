@@ -16,6 +16,18 @@ class ProgressPhoto extends Model
         'taken_at' => 'date',
     ];
 
+    protected $appends = ['week'];
+
+    public function getWeekAttribute(): ?string
+    {
+        return $this->week_label;
+    }
+
+    public function setWeekAttribute($value): void
+    {
+        $this->attributes['week_label'] = $value;
+    }
+
     /**
      * Relasi kembali ke Project
      */

@@ -87,4 +87,36 @@ class Project extends Model
     {
         return $this->hasMany(HseReport::class);
     }
+
+    /**
+     * Relasi ke Next Week Plans (To-Do List Rencana Kerja Mingguan)
+     */
+    public function nextWeekPlans(): HasMany
+    {
+        return $this->hasMany(NextWeekPlan::class)->orderBy('id', 'asc');
+    }
+
+    /**
+     * Relasi ke Project Documents (Laporan & Catatan Rich Text Mingguan)
+     */
+    public function documents(): HasMany
+    {
+        return $this->hasMany(ProjectDocument::class);
+    }
+
+    /**
+     * Relasi ke Project Schedules (Daftar Pekerjaan & Bobot Terintegrasi)
+     */
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(ProjectSchedule::class)->orderBy('id', 'asc');
+    }
+
+    /**
+     * Relasi ke Project Attachments (Lampiran Dokumen PDF)
+     */
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(ProjectAttachment::class)->latest('id');
+    }
 }
