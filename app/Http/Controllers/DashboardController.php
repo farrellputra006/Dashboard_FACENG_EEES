@@ -228,6 +228,12 @@ class DashboardController extends Controller
         preg_match('/\d+/', $currentWeek, $wMatch);
         $weekNumber = !empty($wMatch) ? (int)$wMatch[0] : 1;
 
+        // Sanitasi plain text anti-XSS
+        $validated['project_name'] = strip_tags(trim($validated['project_name']));
+        $validated['project_code'] = strip_tags(trim($validated['project_code']));
+        if (isset($validated['location'])) $validated['location'] = strip_tags(trim($validated['location']));
+        if (isset($validated['contractor_name'])) $validated['contractor_name'] = strip_tags(trim($validated['contractor_name']));
+
         // 1. Buat master Project
         $project = Project::create([
             'project_code' => strtoupper(trim($validated['project_code'])),
@@ -733,8 +739,11 @@ class DashboardController extends Controller
         if ($request->has('rows') && is_array($request->input('rows'))) {
             $parsedRows = $request->input('rows');
         }
-        // 2. Cek jika dikirim berupa file upload .csv
+        // 2. Cek jika dikirim berupa file upload .csv / .xlsx
         elseif ($request->hasFile('file')) {
+            $request->validate([
+                'file' => 'required|file|mimes:csv,txt,xlsx,xls|max:20480',
+            ]);
             $file = $request->file('file');
             $extension = strtolower($file->getClientOriginalExtension());
 
@@ -1031,18 +1040,21 @@ class DashboardController extends Controller
             ], 404);
         }
 
-        // Resolusi label minggu
-        $weekLabel = $request->input('week') ?: $request->input('week_label') ?: ($project->current_week ?: 'Week 12');
+        // Resolusi label minggu dan teks ter-sanitasi
+        $weekLabel = strip_tags(trim($request->input('week') ?: $request->input('week_label') ?: ($project->current_week ?: 'Week 12')));
 
-        // Resolusi caption dan title
-        $caption = $request->input('caption') ?: $request->input('title') ?: ('Dokumentasi Progres ' . $weekLabel);
-        $title = $request->input('title') ?: Str::limit($caption, 60);
-        $location = $request->input('location') ?: ($project->location ?: 'Sengkang Field, Wajo');
+        // Resolusi caption dan title anti-XSS
+        $rawCaption = $request->input('caption') ?: $request->input('title') ?: ('Dokumentasi Progres ' . $weekLabel);
+        $caption = strip_tags(trim($rawCaption));
+        $title = strip_tags(trim($request->input('title') ?: Str::limit($caption, 60)));
+        $location = strip_tags(trim($request->input('location') ?: ($project->location ?: 'Sengkang Field, Wajo')));
         $takenAt = $request->input('taken_at') ?: date('Y-m-d');
 
-        // Simpan file gambar
-        $extension = $file->getClientOriginalExtension() ?: 'jpg';
-        $fileName = 'photo_' . $project->id . '_' . Str::slug($weekLabel) . '_' . time() . '_' . Str::random(6) . '.' . $extension;
+        // Simpan file gambar dengan nama acak aman
+        $rawExt = strtolower($file->extension() ?: $file->getClientOriginalExtension() ?: 'jpg');
+        $allowedImageExts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+        $extension = in_array($rawExt, $allowedImageExts) ? $rawExt : 'jpg';
+        $fileName = 'photo_' . $project->id . '_' . Str::slug($weekLabel) . '_' . time() . '_' . Str::random(8) . '.' . $extension;
 
         // 1. Simpan ke storage disk public (storage/app/public/project-photos)
         $storedPath = $file->storeAs('project-photos', $fileName, 'public');

@@ -478,23 +478,23 @@ class ProjectControlSeeder extends Seeder
         // =========================================================================
         $toDoPlansConfig = [
             'Week 10' => [
-                ['Review dokumen shop drawing piping isometric dan tie-in point existing facility', 'Siti Rahma (Eng)', '2025-08-18', true],
-                ['Pengecoran pondasi utama compressor bay A dengan volume 120 m3 beton mutu tinggi', 'Ahmad Fauzi (Civil)', '2025-08-20', true],
-                ['Penyusunan preliminary HAZOP action items dan safety bridging document', 'Hendra Wijaya (HSE)', '2025-08-21', true],
+                ['Review dokumen shop drawing piping isometric dan tie-in point existing facility', 'Engineering FACENG', '2025-08-18', true],
+                ['Pengecoran pondasi utama compressor bay A dengan volume 120 m3 beton mutu tinggi', 'Civil & Structure Team', '2025-08-20', true],
+                ['Penyusunan preliminary HAZOP action items dan safety bridging document', 'HSE Officer FACENG', '2025-08-21', true],
             ],
             'Week 11' => [
-                ['Persiapan pondasi pedestal dan perataan lantai kerja shelter unit kompresor', 'Budi Santoso (Const)', '2025-08-25', true],
-                ['Kedatangan unit genset emergency dan transformer auxiliary di site Sengkang', 'Dewi Lestari (Proc)', '2025-08-27', true],
-                ['Inspeksi berkala alat pemadam api ringan (APAR) dan rambu keselamatan zona berbahaya', 'Hendra Wijaya (HSE)', '2025-08-26', true],
-                ['Kalibrasi torque wrench dan peralatan rigging sebelum lifting operation', 'Andi Rahman (QC)', '2025-08-28', false],
+                ['Persiapan pondasi pedestal dan perataan lantai kerja shelter unit kompresor', 'Construction Team', '2025-08-25', true],
+                ['Kedatangan unit genset emergency dan transformer auxiliary di site Sengkang', 'Procurement Specialist', '2025-08-27', true],
+                ['Inspeksi berkala alat pemadam api ringan (APAR) dan rambu keselamatan zona berbahaya', 'HSE Officer FACENG', '2025-08-26', true],
+                ['Kalibrasi torque wrench dan peralatan rigging sebelum lifting operation', 'QC Engineer FACENG', '2025-08-28', false],
             ],
             'Week 12' => [
-                ['Mobilisasi hydraulic crane 80-ton dan rigging accessories untuk pengangkatan modul kompresor unit #2', 'Budi Santoso (Const)', '2025-09-03', true],
-                ['Finalisasi Permit To Work (PTW) panas dan cold work area flare line bersama Pertamina EP / EEES', 'Hendra Wijaya (HSE)', '2025-09-02', true],
-                ['Penyelesaian hydrostatic test spool piping 6-inch header gas dan verifikasi visual NDT', 'Andi Rahman (QC)', '2025-09-05', false],
-                ['Pengiriman batch kedua kabel instrumentasi dan junction box explosion-proof dari Makassar port', 'Dewi Lestari (Proc)', '2025-09-06', false],
-                ['Pre-commissioning lube oil system compressor package GEC#1 dengan vendor specialist', 'Siti Rahma (Eng)', '2025-09-08', false],
-                ['Penyelarasan elevasi pipe support dan torqueing anchor bolts struktur shelter kompresor', 'Ahmad Fauzi (Civil)', '2025-09-07', false],
+                ['Mobilisasi hydraulic crane 80-ton dan rigging accessories untuk pengangkatan modul kompresor unit #2', 'Construction Team', '2025-09-03', true],
+                ['Finalisasi Permit To Work (PTW) panas dan cold work area flare line bersama Pertamina EP / EEES', 'HSE Officer FACENG', '2025-09-02', true],
+                ['Penyelesaian hydrostatic test spool piping 6-inch header gas dan verifikasi visual NDT', 'QC Engineer FACENG', '2025-09-05', false],
+                ['Pengiriman batch kedua kabel instrumentasi dan junction box explosion-proof dari Makassar port', 'Procurement Specialist', '2025-09-06', false],
+                ['Pre-commissioning lube oil system compressor package GEC#1 dengan vendor specialist', 'Engineering FACENG', '2025-09-08', false],
+                ['Penyelarasan elevasi pipe support dan torqueing anchor bolts struktur shelter kompresor', 'Civil & Structure Team', '2025-09-07', false],
             ],
         ];
 
@@ -568,7 +568,7 @@ class ProjectControlSeeder extends Seeder
             [
                 'title' => 'Laporan Eksekutif Mingguan — Week 12 (GBKB-55)',
                 'content' => $initialDocContent,
-                'updated_by' => 'Andi Rahman (Project Control)',
+                'updated_by' => 'Project Control FACENG',
             ]
         );
 

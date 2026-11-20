@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use App\Models\ProjectDocument;
 use App\Models\Project;
+use App\Helpers\HtmlSanitizer;
 
 class ProjectDocumentController extends Controller
 {
@@ -164,9 +165,10 @@ class ProjectDocumentController extends Controller
             ], 422);
         }
 
-        $weekLabel = trim($request->input('week'));
-        $title = $request->input('title') ? trim($request->input('title')) : "Project Notes & Risk — {$weekLabel}";
-        $content = $request->input('content') ?: '';
+        $weekLabel = HtmlSanitizer::cleanPlainText($request->input('week'));
+        $rawTitle = $request->input('title') ? trim($request->input('title')) : "Project Notes & Risk — {$weekLabel}";
+        $title = HtmlSanitizer::cleanPlainText($rawTitle);
+        $content = HtmlSanitizer::clean($request->input('content') ?: '');
 
         $user = $request->user();
         $updatedBy = $user ? $user->name : 'Project Control Engineer';

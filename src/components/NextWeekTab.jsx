@@ -755,7 +755,7 @@ export default function NextWeekTab({
                     type="text"
                     value={editPic}
                     onChange={(e) => setEditPic(e.target.value)}
-                    placeholder="misal: Andi Rahman / QC"
+                    placeholder="misal: Project Control / QC Engineer"
                     disabled={isUpdating}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                   />

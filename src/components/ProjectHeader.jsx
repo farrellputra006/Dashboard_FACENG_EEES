@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Download, ChevronDown, Check, UploadCloud, FileSpreadsheet, Calendar, Trash2 } from 'lucide-react';
+import { Download, ChevronDown, Check, UploadCloud, Calendar, RefreshCw } from 'lucide-react';
 import { downloadProgressTemplate } from '../utils/fileImporter';
+import { useAuth } from '../context/AuthContext';
 
 export default function ProjectHeader({
   project,
@@ -10,7 +11,11 @@ export default function ProjectHeader({
   onExportPdf,
   onOpenImportModal,
   onOpenDeleteModal,
+  isFetchingWeek = false,
 }) {
+  const { user } = useAuth();
+  const canMutate = user && ['admin', 'project_control'].includes(user.role);
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const weeksList = availableWeeks && availableWeeks.length > 0
     ? availableWeeks
@@ -20,9 +25,9 @@ export default function ProjectHeader({
     <div className="pt-2 pb-4">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         {/* Left: Project Title & Subtitle */}
-        <div>
+        <div className="min-w-0 flex-1">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
-            <span>{project.name}</span>
+            <span className="truncate">{project.name}</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 flex items-center gap-2 flex-wrap">
             <span>Project Control Overview</span>
@@ -35,24 +40,23 @@ export default function ProjectHeader({
           </p>
         </div>
 
-        {/* Right: Controls & Badges */}
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Live Badge */}
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            LIVE
-          </span>
-
-          {/* Week Selector Dropdown */}
+        {/* Right: Actions Bar (1 Baris Rapi & Sejajar di Desktop) */}
+        <div className="flex items-center gap-2 flex-shrink-0 flex-wrap lg:flex-nowrap">
+          {/* 1. Week Selector Dropdown */}
           <div className="relative">
             <button
               type="button"
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-white border border-slate-200/80 rounded-2xl text-xs font-bold text-slate-800 hover:bg-slate-50 hover:border-slate-300 shadow-xs transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="h-9 sm:h-10 px-3.5 inline-flex items-center gap-2 bg-white border border-slate-200/90 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 hover:bg-slate-50 hover:border-slate-300 shadow-xs transition-all whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              title={`Pilih Periode Minggu (${selectedWeek})`}
             >
-              <Calendar className="w-3.5 h-3.5 text-blue-600" />
+              {isFetchingWeek ? (
+                <RefreshCw className="w-3.5 h-3.5 text-blue-600 animate-spin" />
+              ) : (
+                <Calendar className="w-3.5 h-3.5 text-blue-600" />
+              )}
               <span>{selectedWeek}</span>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {dropdownOpen && (
@@ -89,43 +93,38 @@ export default function ProjectHeader({
             )}
           </div>
 
-          {/* Import Data Excel (.xlsx) Button */}
-          {onOpenImportModal && (
+          {/* 2. Download Template Button (Khusus Admin & Project Control) */}
+          {canMutate && (
             <button
               type="button"
-              onClick={onOpenImportModal}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs rounded-2xl border border-slate-200/80 shadow-xs transition-all hover:border-blue-400 group"
-              title="Import Data Excel (.xlsx) — Untuk update otomatis angka S-Curve & Progress Summary"
+              onClick={() => downloadProgressTemplate('xlsx')}
+              className="h-9 sm:h-10 px-3.5 inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-semibold text-xs sm:text-sm rounded-xl border border-slate-200/90 shadow-xs transition-all hover:border-slate-300 whitespace-nowrap"
+              title="Download template standar Excel (.xlsx)"
             >
-              <UploadCloud className="w-4 h-4 text-blue-600 group-hover:scale-110 transition-transform" />
-              <div className="text-left">
-                <span className="block leading-tight text-slate-800 group-hover:text-blue-600 transition-colors">
-                  Import Data Excel (.xlsx)
-                </span>
-                <span className="text-[10px] text-slate-400 font-normal hidden lg:block leading-none">
-                  Update angka S-Curve & Progress Summary
-                </span>
-              </div>
+              <Download className="w-3.5 h-3.5 text-slate-500" />
+              <span>Template</span>
             </button>
           )}
 
-          {/* Download Template Button */}
-          <button
-            type="button"
-            onClick={() => downloadProgressTemplate('xlsx')}
-            className="inline-flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-50 text-slate-600 font-semibold text-xs rounded-2xl border border-slate-200/80 shadow-xs transition-all"
-            title="Download Template Format Excel Standar FACENG"
-          >
-            <Download className="w-3.5 h-3.5 text-slate-500" />
-            <span className="hidden sm:inline">Template</span>
-          </button>
+          {/* 3. Import Data Excel (.xlsx) Button (Khusus Admin & Project Control) */}
+          {canMutate && onOpenImportModal && (
+            <button
+              type="button"
+              onClick={onOpenImportModal}
+              className="h-9 sm:h-10 px-3.5 inline-flex items-center gap-2 bg-white hover:bg-blue-50/60 text-slate-800 hover:text-blue-700 font-semibold text-xs sm:text-sm rounded-xl border border-slate-200/90 hover:border-blue-300 shadow-xs transition-all whitespace-nowrap group"
+              title="Import Data Excel (.xlsx) — Update angka S-Curve & Progress Summary"
+            >
+              <UploadCloud className="w-4 h-4 text-blue-600 group-hover:scale-110 transition-transform" />
+              <span>Import Excel</span>
+            </button>
+          )}
 
-          {/* Export Report PDF Button */}
+          {/* 4. Export Report PDF Button (Semua Role) */}
           {onExportPdf && (
             <button
               type="button"
               onClick={onExportPdf}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-2xl shadow-xs transition-all hover:shadow-sm"
+              className="h-9 sm:h-10 px-4 inline-flex items-center gap-2 bg-[#3B6CF6] hover:bg-blue-600 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-xs transition-all hover:shadow whitespace-nowrap"
               title="Export Laporan Eksekutif PDF"
             >
               <Download className="w-3.5 h-3.5 text-white" />

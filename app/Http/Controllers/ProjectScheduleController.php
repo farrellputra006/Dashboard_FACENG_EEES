@@ -182,6 +182,10 @@ class ProjectScheduleController extends Controller
             'baseline_finish' => 'nullable|date|after_or_equal:baseline_start',
         ]);
 
+        if (isset($validated['task_name'])) {
+            $validated['task_name'] = strip_tags(trim($validated['task_name']));
+        }
+
         $schedule = DB::transaction(function () use ($validated) {
             $item = ProjectSchedule::create($validated);
             self::recalculateWeights($validated['project_id']);
@@ -214,6 +218,10 @@ class ProjectScheduleController extends Controller
             'baseline_start' => 'nullable|date',
             'baseline_finish' => 'nullable|date',
         ]);
+
+        if (isset($validated['task_name'])) {
+            $validated['task_name'] = strip_tags(trim($validated['task_name']));
+        }
 
         DB::transaction(function () use ($schedule, $validated) {
             $schedule->update($validated);

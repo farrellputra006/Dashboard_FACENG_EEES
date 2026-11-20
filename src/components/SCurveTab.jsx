@@ -1373,13 +1373,13 @@ export default function SCurveTab({ dbMetrics, project, selectedWeek, projectId,
               <div className="text-center">
                 <p className="font-semibold text-slate-700">Dipersiapkan Oleh:</p>
                 <div className="h-20"></div>
-                <p className="font-bold text-slate-900 underline">Andi Rahman</p>
+                <p className="font-bold text-slate-900 underline">Project Control FACENG</p>
                 <p className="text-slate-600 text-[11px]">Project Control Engineer - FACENG</p>
               </div>
               <div className="text-center">
                 <p className="font-semibold text-slate-700">Disetujui Oleh:</p>
                 <div className="h-20"></div>
-                <p className="font-bold text-slate-900 underline">Budi Hartono</p>
+                <p className="font-bold text-slate-900 underline">Engineering Manager FACENG</p>
                 <p className="text-slate-600 text-[11px]">Lead Project Control / Engineering Manager</p>
               </div>
             </div>

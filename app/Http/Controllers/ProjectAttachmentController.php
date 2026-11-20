@@ -80,8 +80,8 @@ class ProjectAttachmentController extends Controller
             ], 404);
         }
 
-        $category = $request->query('category');
-        $search = $request->query('search');
+        $category = strip_tags(trim($request->query('category', '')));
+        $search = strip_tags(trim($request->query('search', '')));
 
         $query = ProjectAttachment::with(['uploader:id,name,job_title'])
             ->where('project_id', $resolvedId);
@@ -164,14 +164,15 @@ class ProjectAttachmentController extends Controller
         $fileSize = $file->getSize();
 
         // 3. Tentukan judul dokumen
-        $title = trim($request->input('title', ''));
+        $title = strip_tags(trim($request->input('title', '')));
         if (empty($title)) {
             // Jika kosong, gunakan nama file asli tanpa ekstensi .pdf
             $title = preg_replace('/\.pdf$/i', '', $originalName);
+            $title = strip_tags(trim($title));
         }
 
         // 4. Tentukan kategori dokumen
-        $category = trim($request->input('category', ''));
+        $category = strip_tags(trim($request->input('category', '')));
         if (empty($category)) {
             $category = 'Weekly Report';
         }

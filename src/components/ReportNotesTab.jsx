@@ -48,6 +48,7 @@ import {
 
 import { useAuth } from '../context/AuthContext';
 import { apiRequest } from '../utils/api';
+import { sanitizeHtml } from '../utils/sanitizer';
 import ProjectAttachmentsCard from './ProjectAttachmentsCard';
 
 // Template Standar Resmi FACENG (Area of Concern, Risk Register, Issue Register)
@@ -217,7 +218,7 @@ export default function ReportNotesTab({
 
         if (editor) {
           const initialContent = doc.content || FACENG_STANDARD_TEMPLATE_HTML;
-          editor.commands.setContent(initialContent);
+          editor.commands.setContent(sanitizeHtml(initialContent));
         }
       }
     } catch (err) {

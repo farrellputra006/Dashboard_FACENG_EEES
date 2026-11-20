@@ -45,11 +45,26 @@ export async function apiRequest(endpoint, options = {}) {
 
   const headers = {
     'Accept': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest',
     ...(options.headers || {}),
   };
 
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  // Auto-inject CSRF XSRF-TOKEN header if cookie is present
+  if (typeof document !== 'undefined' && document.cookie) {
+    const xsrfCookie = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('XSRF-TOKEN='));
+    if (xsrfCookie) {
+      try {
+        headers['X-XSRF-TOKEN'] = decodeURIComponent(xsrfCookie.split('=')[1]);
+      } catch {
+        // ignore decode failure
+      }
+    }
   }
 
   let body = options.body;
@@ -59,6 +74,7 @@ export async function apiRequest(endpoint, options = {}) {
   }
 
   const response = await fetch(url, {
+    credentials: 'same-origin',
     ...options,
     headers,
     body,

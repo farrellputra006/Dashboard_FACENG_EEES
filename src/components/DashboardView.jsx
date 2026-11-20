@@ -23,7 +23,7 @@ import {
   transformHseReport
 } from '../utils/laravelAdapter';
 import { apiRequest } from '../utils/api';
-import { Database, Wifi, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 
 export default function DashboardView() {
   // Check for pre-injected data from Laravel Blade View (window.__LARAVEL_DATABASE_DATA__)
@@ -291,12 +291,29 @@ export default function DashboardView() {
       {/* 2. Area Konten Utama */}
       <main className="flex-1 p-6 md:p-8 overflow-y-auto min-w-0 max-h-screen">
         <div className="max-w-7xl mx-auto space-y-4">
-          {/* Top Bar with Breadcrumbs & Search */}
+          {/* Top Bar with Breadcrumbs & Search & Notification Popover */}
           <TopBar
             projectName={currentProject.name}
+            currentProjectId={currentProject.rawId || currentProject.id}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             onOpenCreateProject={() => setIsCreateProjectOpen(true)}
+            onQuickJump={(targetProjectId, targetSectionKey) => {
+              if (targetProjectId) {
+                const target = projectsList.find(
+                  (p) =>
+                    (p.rawId || (typeof p.id === 'string' ? p.id.replace('proj-', '') : p.id)) == targetProjectId ||
+                    p.id == targetProjectId ||
+                    p.id === `proj-${targetProjectId}`
+                );
+                if (target) {
+                  setSelectedProjectId(target.id);
+                }
+              }
+              if (targetSectionKey) {
+                setActiveTab(targetSectionKey);
+              }
+            }}
           />
 
           {/* Success Notification Banner */}
@@ -316,20 +333,7 @@ export default function DashboardView() {
             </div>
           )}
 
-          {/* Database Source Indicator Pill & Multi-Week Live Status */}
-          <div className="flex items-center justify-between pt-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white text-slate-700 text-xs font-medium border border-slate-200/80 shadow-xs">
-              <Database className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
-              <span>Sumber Data: <strong className="text-slate-900 font-semibold">{dataSource}</strong></span>
-              <span className="text-slate-300">•</span>
-              <span className="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">{selectedWeek} Active</span>
-              {isFetchingWeek && (
-                <RefreshCw className="w-3.5 h-3.5 text-blue-500 animate-spin ml-1" />
-              )}
-            </div>
-          </div>
-
-          {/* Project Header with Dynamic Week Selector & Import Button */}
+          {/* Project Header with Dynamic Week Selector, Template, Import & Export Actions */}
           <ProjectHeader
             project={currentProject}
             selectedWeek={selectedWeek}
@@ -338,6 +342,7 @@ export default function DashboardView() {
             onExportPdf={() => setIsExportOpen(true)}
             onOpenImportModal={() => setIsImportOpen(true)}
             onOpenDeleteModal={() => setIsDeleteProjectOpen(true)}
+            isFetchingWeek={isFetchingWeek}
           />
 
           {/* 3. Sistem Tab Navigasi (6 Tab Interaktif) */}

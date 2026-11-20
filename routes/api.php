@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NextWeekPlanController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProjectAttachmentController;
 use App\Http\Controllers\ProjectDocumentController;
 use App\Http\Controllers\ProjectScheduleController;
@@ -64,6 +65,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Progress Summary & S-Curve Synchronization
     Route::get('/progress-summary', [ProjectScheduleController::class, 'progressSummary'])->name('api.progress-summary.index');
     Route::post('/schedule-weekly-progress', [ProjectScheduleController::class, 'saveWeeklyProgress'])->name('api.schedule-weekly-progress.store');
+
+    // Pusat Informasi & Notifikasi Kelengkapan Section
+    Route::get('/notifications/general', [NotificationController::class, 'general'])->name('api.notifications.general');
 
     // Project Attachments (Lampiran Dokumen PDF: Weekly Report, Kontrak, LOA, SPK, Schedule PDF, dll)
     Route::get('/projects/{project}/attachments', [ProjectAttachmentController::class, 'index'])->name('api.projects.attachments.index');

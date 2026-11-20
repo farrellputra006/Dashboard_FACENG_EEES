@@ -34,15 +34,14 @@ export default function Sidebar({
         {/* Header Logo */}
         <div className="p-6 border-b border-slate-100 bg-white">
           <div className="flex items-center gap-3">
-            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600 shadow-md shadow-blue-500/20 border border-blue-500 text-white">
-              <svg className="w-6 h-6 text-cyan-200 drop-shadow-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2L2 20h20L12 2z" fill="rgba(255, 255, 255, 0.25)" />
-                <path d="M12 8L6 18h12L12 8z" fill="rgba(255, 255, 255, 0.45)" />
-              </svg>
-            </div>
+            <img
+              src="/images/logo-energy-equity.png"
+              alt="Energy Equity Logo"
+              className="h-10 w-auto object-contain shrink-0"
+            />
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-lg tracking-tight text-slate-900">Energy Equity</span>
+                <span className="font-extrabold text-lg tracking-tight text-slate-900 leading-tight">Energy Equity</span>
               </div>
               <p className="text-[10px] tracking-widest text-blue-600 font-bold uppercase mt-0.5 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block animate-pulse"></span>

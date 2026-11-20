@@ -143,7 +143,7 @@ class NextWeekPlanController extends Controller
         }
 
         // 3. Validasi isi task_description tidak boleh hanya spasi
-        $taskDescription = trim($request->input('task_description', ''));
+        $taskDescription = strip_tags(trim($request->input('task_description', '')));
         if ($taskDescription === '') {
             return response()->json([
                 'success' => false,
@@ -168,8 +168,8 @@ class NextWeekPlanController extends Controller
             ], 422);
         }
 
-        $week = trim($request->input('week'));
-        $pic = $request->input('pic') ? trim($request->input('pic')) : null;
+        $week = strip_tags(trim($request->input('week')));
+        $pic = $request->input('pic') ? strip_tags(trim($request->input('pic'))) : null;
         $targetDate = $request->input('target_date') ?: null;
         $isCompleted = filter_var($request->input('is_completed', false), FILTER_VALIDATE_BOOLEAN);
 
@@ -239,7 +239,7 @@ class NextWeekPlanController extends Controller
 
         // 3. Update task_description jika ada
         if ($request->has('task_description')) {
-            $desc = trim($request->input('task_description', ''));
+            $desc = strip_tags(trim($request->input('task_description', '')));
             if ($desc === '') {
                 return response()->json([
                     'success' => false,
@@ -259,7 +259,7 @@ class NextWeekPlanController extends Controller
 
         // 5. Update PIC & Target Date & Week jika ada
         if ($request->has('pic')) {
-            $plan->pic = $request->input('pic') ? trim($request->input('pic')) : null;
+            $plan->pic = $request->input('pic') ? strip_tags(trim($request->input('pic'))) : null;
         }
 
         if ($request->has('target_date')) {
@@ -267,7 +267,7 @@ class NextWeekPlanController extends Controller
         }
 
         if ($request->has('week')) {
-            $plan->week = trim($request->input('week'));
+            $plan->week = strip_tags(trim($request->input('week')));
         }
 
         $plan->save();

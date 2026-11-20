@@ -246,7 +246,7 @@ export default function LoginPage() {
                     }
                   }}
                   disabled={isSubmitting}
-                  placeholder="nama@energyequity.com"
+                  placeholder="contoh: control.faceng@example.com"
                   className={`w-full pl-10 pr-4 py-2.5 bg-white border rounded-xl text-sm text-slate-900 placeholder-slate-400 transition-all focus:outline-none focus:ring-2 ${
                     fieldErrors.email
                       ? 'border-rose-400 focus:ring-rose-400/50 bg-rose-50/20'
@@ -348,6 +348,71 @@ export default function LoginPage() {
               )}
             </button>
           </form>
+
+          {/* Akun Demo / Cepat Masuk Divisi FACENG */}
+          <div className="mt-6 pt-5 border-t border-slate-100">
+            <div className="flex items-center justify-between mb-2.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                Pilih Akun Demo Divisi:
+              </span>
+              <span className="text-[10px] text-slate-400">1-Klik Isi Form</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('admin.faceng@example.com');
+                  setPassword('admin123');
+                  setFieldErrors({});
+                  setServerError('');
+                }}
+                className="p-2 rounded-xl bg-slate-50 hover:bg-blue-50/70 border border-slate-200/80 hover:border-blue-300 text-left transition-all group"
+              >
+                <div className="text-[11px] font-bold text-slate-800 group-hover:text-blue-700 leading-tight truncate">
+                  Admin
+                </div>
+                <div className="text-[9px] text-slate-500 leading-tight mt-0.5 font-mono truncate">
+                  admin.faceng
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('control.faceng@example.com');
+                  setPassword('control123');
+                  setFieldErrors({});
+                  setServerError('');
+                }}
+                className="p-2 rounded-xl bg-slate-50 hover:bg-blue-50/70 border border-slate-200/80 hover:border-blue-300 text-left transition-all group"
+              >
+                <div className="text-[11px] font-bold text-slate-800 group-hover:text-blue-700 leading-tight truncate">
+                  Project Control
+                </div>
+                <div className="text-[9px] text-slate-500 leading-tight mt-0.5 font-mono truncate">
+                  control.faceng
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('viewer.faceng@example.com');
+                  setPassword('viewer123');
+                  setFieldErrors({});
+                  setServerError('');
+                }}
+                className="p-2 rounded-xl bg-slate-50 hover:bg-blue-50/70 border border-slate-200/80 hover:border-blue-300 text-left transition-all group"
+              >
+                <div className="text-[11px] font-bold text-slate-800 group-hover:text-blue-700 leading-tight truncate">
+                  Viewer
+                </div>
+                <div className="text-[9px] text-slate-500 leading-tight mt-0.5 font-mono truncate">
+                  viewer.faceng
+                </div>
+              </button>
+            </div>
+          </div>
 
           {/* Security Note Footer */}
           <div className="mt-8 pt-6 border-t border-slate-200 text-center">
